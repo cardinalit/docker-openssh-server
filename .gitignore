@@ -1,0 +1,16 @@
+# OS generated
+.AppleDouble
+.DS_Store
+
+# IDEA generated
+.idea
+
+# Log files and temporary files
+*.log
+*.swp
+
+# File configuration
+docker-compose.yml
+.env
+sshd_config
+authorized_keys

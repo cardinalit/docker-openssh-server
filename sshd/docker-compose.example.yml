@@ -1,0 +1,36 @@
+---
+version: '3.7'
+
+networks:
+  jumphost-net:
+    name: jumphost_net
+    driver: overlay
+    attachable: true
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.22.0.0/16"
+
+services:
+  openssh:
+    image: ghcr.io/linuxserver/openssh-server:version-8.3_p1-r0
+    hostname: jumphost-openssh
+    ports:
+      - target: 2222
+        published: 32222
+        mode: host
+    networks:
+      - jumphost-net
+    env_file:
+      - .env
+    volumes:
+      - ./sshd/data:/config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.openssh == true
+      restart_policy:
+        condition: any
+        delay: 5s
+      update_config:
+        order: start-first
