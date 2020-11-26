@@ -11,6 +11,9 @@
 
 # File configuration
 docker-compose.yml
-.env
+openssh.env
 sshd_config
 authorized_keys
+
+# Exclude the important files
+!config/*

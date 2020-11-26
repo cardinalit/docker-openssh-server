@@ -22,7 +22,7 @@ services:
     networks:
       - jumphost-net
     env_file:
-      - .env
+      - openssh.env
     volumes:
       - ./sshd/data:/config
     deploy:

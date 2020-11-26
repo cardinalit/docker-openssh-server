@@ -1,51 +1,52 @@
 #!/usr/bin/env bash
 
 JUMPHOST_FILE_YML="${OPENSSH_YML:-docker-compose.yml}"
-INGRESS_FILE_ACME="${TRAEFIK_ACME:-traefik/acme.json}"
-INGRESS_FILE_CONF="${TRAEFIK_CONF:-traefik/traefik.yml}"
-INGRESS_STACK_NAME="${STACK_NAME:-ingress}"
+JUMPHOST_FILE_ENV="${OPENSSH_ENV:-openssh.env}"
+JUMPHOST_FILE_SSHD_CONFIG="${JUMPHOST_SSHD_CONFIG:-sshd/data/ssh_host_keys/sshd_config}"
+JUMPHOST_FILE_AUTHORIZED_KEYS="${JUMPHOST_AUTHORIZED_KEYS:-sshd/data/.ssh/authorized_keys}"
+JUMPHOST_STACK_NAME="${STACK_NAME:-jumphost}"
 
-if [ -z "$1" ]; then
-  echo "Email must be provided!"
 
-  exit
-fi
-
-ingressCreateConfigIfNotExists() {
-  local email=$1 && shift
-
+createConfigIfNotExists() {
   while [[ $# -gt 0 ]]
   do
-    INGRESS_file=(${1//./ })
-    INGRESS_file[0]=$(echo "${INGRESS_file[0]//// }" | awk '{ print $NF }')
+    _file=(${1//./ })
+    _file[0]=$(echo "${_file[0]//// }" | awk '{ print $NF }')
 
-    case "${INGRESS_file[0]}" in
+    case "${_file[0]}" in
       docker-compose)
-        if [[ ! -f "$1" ]]; then
-          echo " + $1 doesn't exist. Create"
-          cp "traefik/${INGRESS_file[0]}.example.${INGRESS_file[1]}" "${INGRESS_FILE_YML}"
+        if [[ ! -f "${1}" ]]; then
+          echo " + ${1} doesn't exist. Create"
+          cp "config/${_file[0]}.example.${_file[1]}" "${JUMPHOST_FILE_YML}"
         else
-          echo " • $1 exists. Skip"
+          echo " • ${1} exists. Skip"
         fi
         shift
         ;;
-      acme)
-        if [[ ! -f "$1" ]]; then
-          echo " + $1 doesn't exist. Create"
-          cp "traefik/${INGRESS_file[0]}.example.${INGRESS_file[1]}" "${INGRESS_FILE_ACME}"
-          chmod 0600 "${INGRESS_FILE_ACME}"
+      openssh)
+        if [[ ! -f "${1}" ]]; then
+          echo " + ${1} doesn't exist. Create"
+          cp "config/${_file[0]}.example.${_file[1]}" "${JUMPHOST_FILE_ENV}"
         else
-          echo " • $1 exists. Skip"
+          echo " • ${1} exists. Skip"
         fi
         shift
         ;;
-      traefik)
-        if [[ ! -f "$1" ]]; then
-          echo " + $1 doesn't exist. Create"
-          cp "traefik/${INGRESS_file[0]}.example.${INGRESS_file[1]}" "${INGRESS_FILE_CONF}"
-          sed 's/your_email_here@example.com/'"$email"'/g' -i "${INGRESS_FILE_CONF}"
+      sshd_config)
+        if [[ ! -f "${1}" ]]; then
+          echo " + ${1} doesn't exist. Create"
+          cp "config/${_file[0]}" "${JUMPHOST_FILE_SSHD_CONFIG}"
         else
-          echo " • $1 exists. Skip"
+          echo " • ${1} exists. Skip"
+        fi
+        shift
+        ;;
+      authorized_keys)
+        if [[ ! -f "${1}" ]]; then
+          echo " + ${1} doesn't exist. Create"
+          cp "config/${_file[0]}" "${JUMPHOST_FILE_AUTHORIZED_KEYS}"
+        else
+          echo " • ${1} exists. Skip"
         fi
         shift
         ;;
@@ -53,21 +54,22 @@ ingressCreateConfigIfNotExists() {
   done
 }
 
-ingressConfigure() {
+configure() {
   echo "Starting configure:"
 
-  ingressCreateConfigIfNotExists "$1" "${INGRESS_FILE_YML}" "${INGRESS_FILE_ACME}" "${INGRESS_FILE_CONF}"
+  createConfigIfNotExists "${JUMPHOST_FILE_YML}" "${JUMPHOST_FILE_ENV}" "${JUMPHOST_FILE_SSHD_CONFIG}" "${JUMPHOST_FILE_AUTHORIZED_KEYS}"
 }
 
-ingressUp() {
-  echo "Running $INGRESS_STACK_NAME stack"
+up() {
+  echo "Running ${JUMPHOST_STACK_NAME} stack"
 
-  docker stack up -c docker-compose.yml "$INGRESS_STACK_NAME"
+  docker node update --label-add openssh=true $(docker node inspect self --format '{{ .Description.Hostname }}')
+  docker stack up -c docker-compose.yml "${JUMPHOST_STACK_NAME}"
 }
 
 main() {
-  ingressConfigure "$1"
-  ingressUp
+  configure
+  up
 }
 
 main "$@"
