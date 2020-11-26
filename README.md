@@ -16,6 +16,7 @@ The prepared configuration for running OpenSSH server with expose port on a host
    ```
    
    If the command was successful, you will see the following result:  
+   
    ![success_result_here.png](.github/docs/src/img/success_result_here.png)
    
    > **NOTE**
