@@ -8,6 +8,13 @@
 # Log files and temporary files
 *.log
 *.swp
+*.pid
+
+###############################
+
+# App generated
+sshd/data/logs
+sshd/data/ssh_host_keys/ssh_host*
 
 # File configuration
 docker-compose.yml

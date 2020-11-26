@@ -6,11 +6,11 @@ JUMPHOST_FILE_SSHD_CONFIG="${JUMPHOST_SSHD_CONFIG:-sshd/data/ssh_host_keys/sshd_
 JUMPHOST_FILE_AUTHORIZED_KEYS="${JUMPHOST_AUTHORIZED_KEYS:-sshd/data/.ssh/authorized_keys}"
 JUMPHOST_STACK_NAME="${STACK_NAME:-jumphost}"
 
-
 createConfigIfNotExists() {
   while [[ $# -gt 0 ]]
   do
-    _file=(${1//./ })
+    _name=$(basename "${1}")
+    _file=(${_name//./ })
     _file[0]=$(echo "${_file[0]//// }" | awk '{ print $NF }')
 
     case "${_file[0]}" in
@@ -21,7 +21,6 @@ createConfigIfNotExists() {
         else
           echo " • ${1} exists. Skip"
         fi
-        shift
         ;;
       openssh)
         if [[ ! -f "${1}" ]]; then
@@ -30,7 +29,6 @@ createConfigIfNotExists() {
         else
           echo " • ${1} exists. Skip"
         fi
-        shift
         ;;
       sshd_config)
         if [[ ! -f "${1}" ]]; then
@@ -39,7 +37,6 @@ createConfigIfNotExists() {
         else
           echo " • ${1} exists. Skip"
         fi
-        shift
         ;;
       authorized_keys)
         if [[ ! -f "${1}" ]]; then
@@ -48,9 +45,10 @@ createConfigIfNotExists() {
         else
           echo " • ${1} exists. Skip"
         fi
-        shift
         ;;
     esac
+
+    shift
   done
 }
 
@@ -63,7 +61,9 @@ configure() {
 up() {
   echo "Running ${JUMPHOST_STACK_NAME} stack"
 
-  docker node update --label-add openssh=true $(docker node inspect self --format '{{ .Description.Hostname }}')
+  echo "Added label to node:" \
+    $(docker node update --label-add openssh=true \
+      $(docker node inspect self --format '{{ .Description.Hostname }}'))
   docker stack up -c docker-compose.yml "${JUMPHOST_STACK_NAME}"
 }
 
