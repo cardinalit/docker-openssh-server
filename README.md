@@ -48,7 +48,7 @@ The prepared configuration for running OpenSSH server with expose port on a host
 ### Example
 
 > Example on a local machine:  
-> > • Docker version: Docker version 19.03.13, build 4484c46d9d  
-> > • OS: macOS Big Sur version 11.0.1
+> ⠀• Docker version: Docker version 19.03.13, build 4484c46d9d  
+> ⠀• OS: macOS Big Sur version 11.0.1
 
 ![full_example.gif](.github/docs/src/gif/full_example.gif)
