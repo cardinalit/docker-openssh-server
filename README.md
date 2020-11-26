@@ -24,3 +24,16 @@ The prepared configuration for running OpenSSH server with expose port on a host
    > When you run it again, the script will not overwrite existing files in the system :)
 
    ![not_overwrite_here.png](.github/docs/src/img/not_overwrite_here.png)
+
+3. You should add your or another user public key to `sshd/data/.ssh/authorized_keys`:
+   ```shell script
+   $> echo 'ssh-rsa .......... user@PC' >> sshd/data/.ssh/authorized_keys
+   ```
+   
+4. After you can connect to your OpenSSH server:
+   ```shell script
+   $> ssh -p 32222 devops@localhost
+   ```
+   ![success_connect.png](.github/docs/src/img/success_connect.png)
+   
+5. Enjoy!
