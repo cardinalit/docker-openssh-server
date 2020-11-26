@@ -21,6 +21,10 @@ services:
         mode: host
     networks:
       - jumphost-net
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2222"]
+      interval: 10s
+      timeout: 5s
     env_file:
       - openssh.env
     volumes:
