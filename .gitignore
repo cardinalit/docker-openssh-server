@@ -16,7 +16,7 @@
 sshd/data/logs
 sshd/data/ssh_host_keys/ssh_host*
 sshd/data/.bash_history
-*.txt
+sshd/secrets/*.txt
 
 # File configuration
 docker-compose.yml
