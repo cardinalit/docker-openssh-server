@@ -1,5 +1,9 @@
 ---
-version: '3.7'
+version: '3.8'
+
+secrets:
+  openssh_secret__user_password:
+    file: ./sshd/secrets/user_password.txt
 
 networks:
   jumphost-net:
@@ -29,6 +33,12 @@ services:
       - openssh.env
     volumes:
       - ./sshd/data:/config
+    secrets:
+      - source: openssh_secret__user_password
+        target: secret__user_password
+        uid: '0'
+        gid: '0'
+        mode: 0400
     deploy:
       placement:
         constraints:
