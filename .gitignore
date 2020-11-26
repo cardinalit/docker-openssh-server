@@ -15,6 +15,7 @@
 # App generated
 sshd/data/logs
 sshd/data/ssh_host_keys/ssh_host*
+sshd/data/.bash_history
 
 # File configuration
 docker-compose.yml

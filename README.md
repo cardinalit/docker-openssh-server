@@ -26,9 +26,16 @@ The prepared configuration for running OpenSSH server with expose port on a host
    ![not_overwrite_here.png](.github/docs/src/img/not_overwrite_here.png)
 
 3. You should add your or another user public key to `sshd/data/.ssh/authorized_keys`:
-   ```shell script
-   $> echo 'ssh-rsa .......... user@PC' >> sshd/data/.ssh/authorized_keys
-   ```
+   
+    3.1 Your PC:
+    ```shell script
+    $> cat ~/.ssh/*.pub
+    ```
+   
+    3.2 Remote host or local:
+    ```shell script
+    $> echo 'ssh-rsa .......... user@PC' >> sshd/data/.ssh/authorized_keys
+    ```
    
 4. After you can connect to your OpenSSH server:
    ```shell script
@@ -37,3 +44,7 @@ The prepared configuration for running OpenSSH server with expose port on a host
    ![success_connect.png](.github/docs/src/img/success_connect.png)
    
 5. Enjoy!
+
+### Example
+
+![full_example.gif](.github/docs/src/gif/full_example.gif)
