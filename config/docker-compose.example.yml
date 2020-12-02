@@ -22,7 +22,6 @@ services:
     ports:
       - target: 2222
         published: 32222
-        mode: host
     networks:
       - jumphost-net
     healthcheck:
