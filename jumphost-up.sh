@@ -23,7 +23,8 @@ createConfigIfNotExists() {
         [[ "${_file[0]}" != "user_password" ]] &&
         [[ "${_file[0]}" != "authorized_keys" ]]; then
 
-      echo "WARNING: Force rm flag is set"
+      echo "WARNING: Force rm flag is set (except: user_password, authorized_keys)"
+      echo " - removing ${1}"
       rm -rf "${1}"
     fi
 
